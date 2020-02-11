@@ -19,7 +19,7 @@
       return {
         msg: 'Welcome to Your Vue.js App',
         path: "http://" + window.location.host + "/",
-        //path: "http://127.0.0.1:8888",
+        // path: "http://127.0.0.1:8888",
         form: {
           name: null
         }

@@ -46,8 +46,8 @@
     name: "Zhangzq",
     data() {
       return {
-        msg: "chat room",
-        //path: "ws://"+ window.location.host +"/websocket/",
+        msg: "chat room ==>【"+ this.$route.query.name +"】",
+        // path: "ws://127.0.0.1:8888/websocket/",
         path: "ws://"+ window.location.host +"/websocket/",
         websocket: null,
         message: '',
@@ -76,10 +76,21 @@
           if (obj.messageType == 1) {
 
             _that.tableData.unshift({
-              "t": _that.getTime(),
+              "t": obj.t,
               "fromusername": "系统消息",
               "textMessage": obj.username + "上线了"
             })
+
+            _that.notification("有人上线啦！",obj.username + "上线了")
+
+            var obj = {
+              "value": obj.username,
+              "label": obj.username
+            };
+
+            if(_that.options.indexOf(obj)==-1){
+              _that.options.push(obj);
+            }
           } else if (obj.messageType == 2) {
 
             _that.tableData.unshift({
@@ -87,6 +98,8 @@
               "fromusername": "系统消息",
               "textMessage": obj.username + "下线了"
             })
+
+            _that.notification("有人下线啦！",obj.username + "下线了")
 
             this.options = [];
 
@@ -132,6 +145,14 @@
                 "tousername": obj.tousername
               })
             }
+
+            if(obj.fromusername!=_that.username){
+              if(obj.tousername=="所有人"){
+                _that.notification("您有一条新消息","【"+obj.fromusername+"】对所有人说："+obj.textMessage);
+              }else{
+                _that.notification("您有一条新消息","【"+obj.fromusername+"】悄悄的对您说："+obj.textMessage);
+              }
+            }
           }
         }
 
@@ -140,6 +161,14 @@
       }
     },
     methods: {
+      notification (title , msg) {
+        const h = this.$createElement;
+
+        this.$notify({
+          title: title,
+          message: h('i', { style: 'color: teal'}, msg)
+        });
+      },
       initWebSocket() {
         this.connection()
       },
@@ -173,6 +202,8 @@
           "textMessage": this.message,
           "tousername": this.value
         })
+
+        this.message = "";
       },
       reloadSelect(obj) {
 
